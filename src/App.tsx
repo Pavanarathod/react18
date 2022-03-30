@@ -1,26 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import Input from "./components/Input";
+import { useAppDispatch, useAppSelector } from "./core/app/hooks";
+import { addTodo } from "./core/slice/todoSlice";
 
-function App() {
+const App = () => {
+  const reduxTodo = useAppSelector((state) => state.todos.todos);
+  const dispatch = useAppDispatch();
+  const [enteredValue, setEnteredValue] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    dispatch(addTodo(enteredValue));
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <form onSubmit={handleSubmit}>
+        <Input
+          inputValue={enteredValue}
+          onValueChange={(e) => setEnteredValue(e.target.value)}
+        />
+        <button type="submit">add todo</button>
+      </form>
+      {reduxTodo.length > 0 && (
+        <>
+          {reduxTodo.map((item, index) => (
+            <p key={index}>{item}</p>
+          ))}
+        </>
+      )}
+    </>
   );
-}
+};
 
 export default App;
